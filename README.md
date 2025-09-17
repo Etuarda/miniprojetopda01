@@ -35,19 +35,6 @@ npm install
 
 -----
 
-## Variáveis de ambiente
-
-Arquivo `.env` (já presente):
-
-```env
-PORT=3000
-JWT_SECRET=minha_chave_super_secreta
-DATABASE_URL="file:./dev.db"
-```
-
-Altere `JWT_SECRET` em produção.
-
------
 
 ## Banco de dados (Prisma)
 
@@ -81,13 +68,8 @@ npm run prisma:studio
 # desenvolvimento (auto-reload)
 npm run dev
 
-# produção
-npm start
-```
 
 O servidor sobe em `http://localhost:3000`.
-
-Se o `app.js` usa o router com prefixo, as rotas ficam em `http://localhost:3000/api/...`.
 
 -----
 
@@ -114,9 +96,9 @@ Se o `app.js` usa o router com prefixo, as rotas ficam em `http://localhost:3000
 ## Modelos (conceito)
 
   - **User**
-      - `id`, `name`, `email` (único), `passwordHash/password`, `timestamps`
+      - `id`, `name`, `email` (único), `passwordHash/password`
   - **Student**
-      - `id`, `name`, `age`, `timestamps`
+      - `id`, `name`, `age`
   - **Grade**
       - `id`, `value` (0–10), `studentId` (N:1 Student, com cascade delete)
 
@@ -151,7 +133,7 @@ Todas as rotas de `Students` e `Stats` exigem token Bearer válido.
 
 -----
 
-## Testes no Postman (sem cURL)
+## Testes no Postman 
 
 1.  Crie um Environment `crud-students`
 
@@ -321,12 +303,11 @@ Todas as rotas de `Students` e `Stats` exigem token Bearer válido.
 
 -----
 
-## Dicas & Troubleshooting
+## Dicas 
 
-  - **Prefixo /api**: se você não usa, ajuste `{{base_url}}` para `http://localhost:3000`.
   - **Express 5**: certifique-se de estar no Node 18+.
   - **Nodemon**: use `npm run dev` para hot-reload.
   - **Seed**: se quiser dados limpos, rode `npm run seed` novamente.
-  - **Limites de paginação**: `size` máximo efetivo = 100 (o controller normaliza).
   - **Gravação do token no Postman**: confira o script em Auth / Login → Tests.
+
 
