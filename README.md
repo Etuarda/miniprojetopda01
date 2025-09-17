@@ -2,22 +2,6 @@
 
 API para gerenciar estudantes e suas notas, com autenticação JWT, banco SQLite (via Prisma) e rotas para estatísticas/relatórios.
 
-## Sumário
-
-  - [Stack](https://www.google.com/search?q=%23stack)
-  - [Pré-requisitos](https://www.google.com/search?q=%23pr%C3%A9-requisitos)
-  - [Instalação](https://www.google.com/search?q=%23instala%C3%A7%C3%A3o)
-  - [Variáveis de ambiente](https://www.google.com/search?q=%23vari%C3%A1veis-de-ambiente)
-  - [Banco de dados (Prisma)](https://www.google.com/search?q=%23banco-de-dados-prisma)
-  - [Executando o projeto](https://www.google.com/search?q=%23executando-o-projeto)
-  - [Estrutura de pastas](https://www.google.com/search?q=%23estrutura-de-pastas)
-  - [Modelos (conceito)](https://www.google.com/search?q=%23modelos-conceito)
-  - [Rotas da API](https://www.google.com/search?q=%23rotas-da-api)
-  - [Testes no Postman (sem cURL)](https://www.google.com/search?q=%23testes-no-postman-sem-curl)
-  - [Validações e erros comuns](https://www.google.com/search?q=%23valida%C3%A7%C3%B5es-e-erros-comuns)
-  - [Dicas & Troubleshooting](https://www.google.com/search?q=%23dicas--troubleshooting)
-  - [Licença](https://www.google.com/search?q=%23licen%C3%A7a)
-
 -----
 
 ## Stack
@@ -345,3 +329,4 @@ Todas as rotas de `Students` e `Stats` exigem token Bearer válido.
   - **Seed**: se quiser dados limpos, rode `npm run seed` novamente.
   - **Limites de paginação**: `size` máximo efetivo = 100 (o controller normaliza).
   - **Gravação do token no Postman**: confira o script em Auth / Login → Tests.
+
