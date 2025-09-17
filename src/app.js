@@ -2,6 +2,12 @@
 import 'dotenv/config';
 import express from 'express';
 import router from './routes.js';
+import { prisma } from './db/prisma.js';
+
+
+process.on('SIGINT', async () => { await prisma.$disconnect(); process.exit(0); });
+process.on('SIGTERM', async () => { await prisma.$disconnect(); process.exit(0); });
+
 
 const app = express();
 
