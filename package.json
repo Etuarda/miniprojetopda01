@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "main": "src/app.js",
-  "description": "",
+  "description": "API CRUD de estudantes com autenticação JWT e Prisma",
   "author": "",
   "license": "ISC",
   "scripts": {
@@ -15,7 +15,7 @@
     "seed": "node prisma/seed.cjs"
   },
   "dependencies": {
-    "@prisma/client": "^5.19.1",
+    "@prisma/client": "^5.22.0",
     "bcryptjs": "^3.0.2",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
@@ -23,6 +23,6 @@
   },
   "devDependencies": {
     "nodemon": "^3.1.10",
-    "prisma": "^5.19.1"
+    "prisma": "^5.22.0"
   }
 }

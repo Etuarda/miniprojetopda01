@@ -1,1 +1,5 @@
+# dependências do node
 node_modules
+
+# Arquivo de banco de dados do Prisma (local)
+/prisma/dev.db

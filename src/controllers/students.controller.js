@@ -1,12 +1,21 @@
+/**
+ * Students Controller
+ * CRUD + consultas (média da turma, melhor aluno, relatórios)
+ */
+
 import { prisma } from '../db/prisma.js';
 
+// valida nota entre 0 e 10
 const isValidGrade = (n) => typeof n === 'number' && n >= 0 && n <= 10;
+
+// média aritmética com 2 casas
 const average = (arr) => {
     if (!Array.isArray(arr) || arr.length === 0) return 0;
     const sum = arr.reduce((acc, n) => acc + n, 0);
     return Number((sum / arr.length).toFixed(2));
 };
 
+/** GET /api/students?page=&size= */
 export async function list(req, res) {
     const { page = 1, size = 50 } = req.query;
     const take = Math.min(Number(size) || 50, 100);
@@ -14,42 +23,45 @@ export async function list(req, res) {
 
     const [rows, total] = await Promise.all([
         prisma.student.findMany({ include: { grades: true }, orderBy: { id: 'asc' }, skip, take }),
-        prisma.student.count()
+        prisma.student.count(),
     ]);
 
     const items = rows.map((s) => ({
         id: String(s.id),
         name: s.name,
         age: s.age,
-        grades: s.grades.map(g => g.value),
-        average: average(s.grades.map(g => g.value))
+        grades: s.grades.map((g) => g.value),
+        average: average(s.grades.map((g) => g.value)),
     }));
 
     return res.json({ items, page: Number(page), size: take, total });
 }
 
+/** GET /api/students/search?q= */
 export async function search(req, res) {
     const q = String(req.query.q || '');
     const rows = await prisma.student.findMany({
         where: { name: { contains: q, mode: 'insensitive' } },
         include: { grades: true },
-        orderBy: { id: 'asc' }
+        orderBy: { id: 'asc' },
     });
 
     const items = rows.map((s) => ({
         id: String(s.id),
         name: s.name,
         age: s.age,
-        grades: s.grades.map(g => g.value),
-        average: average(s.grades.map(g => g.value))
+        grades: s.grades.map((g) => g.value),
+        average: average(s.grades.map((g) => g.value)),
     }));
 
     return res.json(items);
 }
 
+/** POST /api/students */
 export async function create(req, res) {
     const { name, age, grades } = req.body || {};
 
+    // validações simples de entrada
     if (!name || age == null || !Array.isArray(grades) || grades.length === 0) {
         return res.status(400).json({ error: 'name, age e grades (array) são obrigatórios' });
     }
@@ -61,22 +73,19 @@ export async function create(req, res) {
     }
 
     const created = await prisma.student.create({
-        data: {
-            name,
-            age,
-            grades: { create: grades.map(v => ({ value: v })) }
-        },
-        include: { grades: true }
+        data: { name, age, grades: { create: grades.map((v) => ({ value: v })) } },
+        include: { grades: true },
     });
 
     return res.status(201).json({
         id: String(created.id),
         name: created.name,
         age: created.age,
-        grades: created.grades.map(g => g.value)
+        grades: created.grades.map((g) => g.value),
     });
 }
 
+/** PUT /api/students/:id */
 export async function update(req, res) {
     const id = Number(req.params.id);
     const { name, age, grades } = req.body || {};
@@ -99,21 +108,22 @@ export async function update(req, res) {
         data: {
             ...(name !== undefined ? { name } : {}),
             ...(age !== undefined ? { age } : {}),
-            ...(grades !== undefined ? {
-                grades: { deleteMany: {}, create: grades.map(v => ({ value: v })) }
-            } : {})
+            ...(grades !== undefined
+                ? { grades: { deleteMany: {}, create: grades.map((v) => ({ value: v })) } }
+                : {}),
         },
-        include: { grades: true }
+        include: { grades: true },
     });
 
     return res.json({
         id: String(updated.id),
         name: updated.name,
         age: updated.age,
-        grades: updated.grades.map(g => g.value)
+        grades: updated.grades.map((g) => g.value),
     });
 }
 
+/** DELETE /api/students/:id */
 export async function remove(req, res) {
     const id = Number(req.params.id);
     if (Number.isNaN(id)) return res.status(400).json({ error: 'ID inválido' });
@@ -125,47 +135,50 @@ export async function remove(req, res) {
     return res.json({ removed: true });
 }
 
+/** GET /api/students/stats/average */
 export async function classAverage(_req, res) {
     const rows = await prisma.student.findMany({ include: { grades: true } });
-    const averages = rows.map(s => average(s.grades.map(g => g.value)));
+    const averages = rows.map((s) => average(s.grades.map((g) => g.value)));
     const mean = averages.length
         ? Number((averages.reduce((acc, n) => acc + n, 0) / averages.length).toFixed(2))
         : 0;
     return res.json({ classAverage: mean });
 }
 
+/** GET /api/students/stats/top */
 export async function topStudent(_req, res) {
     const rows = await prisma.student.findMany({ include: { grades: true } });
     if (!rows.length) return res.json(null);
 
-    const items = rows.map(s => ({
+    const items = rows.map((s) => ({
         id: String(s.id),
         name: s.name,
         age: s.age,
-        grades: s.grades.map(g => g.value),
-        average: average(s.grades.map(g => g.value))
+        grades: s.grades.map((g) => g.value),
+        average: average(s.grades.map((g) => g.value)),
     }));
 
     const top = items.reduce((best, s) => (s.average > best.average ? s : best), items[0]);
     return res.json(top);
 }
 
+/** GET /api/students/reports?status=aprovados|recuperacao|reprovados */
 export async function reports(req, res) {
     const rows = await prisma.student.findMany({ include: { grades: true } });
-    const items = rows.map(s => ({
+    const items = rows.map((s) => ({
         id: String(s.id),
         name: s.name,
         age: s.age,
-        grades: s.grades.map(g => g.value),
-        average: average(s.grades.map(g => g.value))
+        grades: s.grades.map((g) => g.value),
+        average: average(s.grades.map((g) => g.value)),
     }));
 
     const buckets = {
-        aprovados: items.filter(s => s.average >= 7),
-        recuperacao: items.filter(s => s.average >= 5 && s.average < 7),
-        reprovados: items.filter(s => s.average < 5)
+        aprovados: items.filter((s) => s.average >= 7),
+        recuperacao: items.filter((s) => s.average >= 5 && s.average < 7),
+        reprovados: items.filter((s) => s.average < 5),
     };
 
     const { status } = req.query || {};
-    return res.json(status ? (buckets[status] || []) : buckets);
+    return res.json(status ? buckets[status] || [] : buckets);
 }
