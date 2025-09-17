@@ -70,12 +70,14 @@ npm run dev
 
 
 O servidor sobe em `http://localhost:3000`.
+```
 
 -----
 
-## Estrutura de pastas
 
+## Estrutura de pastas
 ```
+
 ├── .env
 ├── prisma/
 │   ├── schema.prisma
@@ -309,5 +311,6 @@ Todas as rotas de `Students` e `Stats` exigem token Bearer válido.
   - **Nodemon**: use `npm run dev` para hot-reload.
   - **Seed**: se quiser dados limpos, rode `npm run seed` novamente.
   - **Gravação do token no Postman**: confira o script em Auth / Login → Tests.
+
 
 
