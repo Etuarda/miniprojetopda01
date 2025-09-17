@@ -1,41 +1,39 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Configuração do provedor do banco de dados. Neste caso, estamos usando SQLite.
+// Prisma Client
 generator client {
   provider = "prisma-client-js"
 }
 
-// Conexão com o banco de dados. A URL é definida na variável de ambiente.
+// SQLite
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-// Modelo de dados para o Aluno (Student).
-// Define a estrutura da tabela 'students' no banco de dados.
-model Student {
-  // O ID é a chave primária, auto-incrementável e única.
-  id        Int      @id @default(autoincrement())
-  // O nome do aluno.
-  name      String
-  // O email do aluno, que deve ser único.
-  email     String   @unique
-  // A senha do aluno, que será armazenada de forma segura (hash).
-  password  String
-  // A data de criação do registro, com valor padrão para a data e hora atuais.
-  createdAt DateTime @default(now())
-  // A data de atualização do registro.
-  updatedAt DateTime @updatedAt
+// Tabelas e relações compatíveis com controllers e migration.sql
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
-// Modelo de dados para o Usuário (User).
-// Este modelo é genérico e pode ser usado para autenticação.
-model User {
+model Student {
   id        Int      @id @default(autoincrement())
   name      String
-  email     String   @unique
-  password  String
+  age       Int
+  grades    Grade[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([name], map: "Student_name_idx")
+}
+
+model Grade {
+  id        Int      @id @default(autoincrement())
+  value     Float
+  studentId Int
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
